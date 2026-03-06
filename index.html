@@ -23,41 +23,17 @@
   --font-sans:       'Roboto', Arial, sans-serif;
   --font-serif:      'Roboto Slab', Georgia, serif;
   --thumb-size:      22px;
+  --mc-text-gray:    #767676; /* 4.54:1 on white — minimum WCAG AA */
+  --mc-sky:          #0095c8;
+  --mc-sky-light:    #e0f6fd;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: var(--font-sans); font-size: 16px; color: var(--mc-black); background: #fff; line-height: 1.6; -webkit-font-smoothing: antialiased; }
 a { color: var(--mc-purple); }
 
-/* Utility Bar */
-.utility-bar { background: var(--mc-light-gray); border-bottom: 1px solid var(--mc-border); padding: 6px 0; }
-.utility-bar-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; justify-content: flex-end; gap: 20px; align-items: center; }
-.utility-bar a { font-size: 0.75rem; color: var(--mc-dark-gray); text-decoration: none; font-weight: 500; }
-.utility-bar a:hover { color: var(--mc-purple); text-decoration: underline; }
-
-/* Header */
-header { background: var(--mc-white); border-bottom: 4px solid var(--mc-purple); padding: 14px 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
-.header-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.mc-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-.mc-logo-mark { width: 50px; height: 50px; background: var(--mc-purple); border-radius: 3px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Roboto', Arial, sans-serif; font-size: 20px; font-weight: 700; color: white; letter-spacing: -1px; }
-.mc-logo-text { display: flex; flex-direction: column; }
-.mc-logo-name { font-weight: 700; font-size: 1.05rem; color: var(--mc-purple); line-height: 1.1; }
-.mc-logo-sub  { font-size: 0.67rem; color: var(--mc-dark-gray); letter-spacing: 0.04em; text-transform: uppercase; }
-.header-right { text-align: right; }
-.header-page-title { font-weight: 700; font-size: 0.82rem; color: var(--mc-purple); }
-.header-tagline { font-size: 0.68rem; color: var(--mc-dark-gray); font-style: italic; }
-
-/* Breadcrumb */
-.breadcrumb-bar { background: var(--mc-light-gray); border-bottom: 1px solid var(--mc-border); padding: 9px 0; }
-.breadcrumb-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-.breadcrumb { list-style: none; display: flex; flex-wrap: wrap; font-size: 0.78rem; color: var(--mc-dark-gray); }
-.breadcrumb li + li::before { content: " › "; margin: 0 5px; color: var(--mc-mid-gray); }
-.breadcrumb a { color: var(--mc-purple); text-decoration: none; }
-.breadcrumb a:hover { text-decoration: underline; }
-
 /* Layout */
-.page-wrapper { max-width: 1200px; margin: 32px auto 0; padding: 0 24px 80px; display: grid; grid-template-columns: 1fr 260px; gap: 40px; align-items: start; }
-@media (max-width: 860px)  { .page-wrapper { grid-template-columns: 1fr; } .sidebar { order: -1; } }
-@media (max-width: 560px)  { .page-wrapper { padding: 0 16px 60px; } .header-right { display: none; } }
+.page-wrapper { max-width: 860px; margin: 32px auto 0; padding: 0 24px 80px; }
+@media (max-width: 560px)  { .page-wrapper { padding: 0 16px 60px; } }
 
 /* Page Title */
 .page-title-area { margin-bottom: 28px; }
@@ -106,14 +82,15 @@ header { background: var(--mc-white); border-bottom: 4px solid var(--mc-purple);
 .res-tab input:checked + .res-tab-label .res-tab-icon { color: white; }
 .res-tab-title { font-size: 0.74rem; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; color: var(--mc-dark-gray); display: block; line-height: 1.2; }
 .res-tab input:checked + .res-tab-label .res-tab-title { color: white; }
-.res-tab-rate  { font-size: 0.65rem; color: var(--mc-mid-gray); margin-top: 3px; display: block; }
-.res-tab input:checked + .res-tab-label .res-tab-rate { color: rgba(255,255,255,0.75); }
+.res-tab-rate  { font-size: 0.7rem; color: var(--mc-text-gray); margin-top: 3px; display: block; }
+.res-tab input:checked + .res-tab-label .res-tab-rate { color: rgba(255,255,255,0.9); }
+.res-tab input:focus-visible + .res-tab-label { outline: 3px solid var(--mc-purple); outline-offset: 2px; }
 
 /* Slider Panel */
 .slider-section { background: var(--mc-light-gray); border: 1px solid var(--mc-border); border-left: 4px solid var(--mc-purple); border-radius: 0 4px 4px 0; padding: 22px 26px; margin-bottom: 24px; }
 .slider-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 18px; flex-wrap: wrap; gap: 8px; }
 .slider-label-block .lbl { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--mc-dark-gray); }
-.slider-label-block .sub { font-size: 0.72rem; color: var(--mc-mid-gray); margin-top: 1px; }
+.slider-label-block .sub { font-size: 0.72rem; color: var(--mc-text-gray); margin-top: 1px; }
 .credit-display { font-family: var(--font-serif); font-size: 2.6rem; font-weight: 700; color: var(--mc-purple); line-height: 1; }
 .credit-display .unit { font-size: 0.85rem; font-family: var(--font-sans); color: var(--mc-dark-gray); font-weight: 400; margin-left: 4px; }
 
@@ -156,6 +133,7 @@ input[type="range"]::-webkit-slider-thumb {
   margin-top: -8px; /* center on 5px track: (5-22)/2 = -8.5 */
 }
 input[type="range"]:hover::-webkit-slider-thumb { box-shadow: 0 2px 10px rgba(81,35,127,0.5); }
+input[type="range"]:focus-visible { outline: 3px solid var(--mc-purple); outline-offset: 4px; border-radius: 3px; }
 input[type="range"]::-moz-range-thumb {
   width: var(--thumb-size); height: var(--thumb-size); border-radius: 50%;
   background: var(--mc-purple); cursor: pointer; border: 3px solid white;
@@ -201,11 +179,11 @@ input[type="range"]::-moz-range-thumb {
   gap: 1px;
 }
 .tick-mark .tick-line { width: 1px; height: 4px; background: var(--mc-mid-gray); }
-.tick-mark .tick-label { font-size: 0.62rem; color: var(--mc-mid-gray); font-weight: 500; white-space: nowrap; }
+.tick-mark .tick-label { font-size: 0.7rem; color: var(--mc-text-gray); font-weight: 500; white-space: nowrap; }
 
 /* Presets */
 .preset-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--mc-border); }
-.preset-lbl { font-size: 0.7rem; color: var(--mc-mid-gray); font-weight: 500; margin-right: 2px; }
+.preset-lbl { font-size: 0.7rem; color: var(--mc-text-gray); font-weight: 500; margin-right: 2px; }
 .preset-btn { padding: 4px 11px; border-radius: 3px; border: 1.5px solid var(--mc-purple-mid); background: white; font-size: 0.72rem; font-family: var(--font-sans); cursor: pointer; color: var(--mc-purple); font-weight: 500; transition: all 0.1s; }
 .preset-btn:hover { background: var(--mc-purple-light); border-color: var(--mc-purple); }
 .preset-btn.active { background: var(--mc-purple); color: white; border-color: var(--mc-purple); }
@@ -218,15 +196,16 @@ input[type="range"]::-moz-range-thumb {
 .toggle-slider:before { content: ''; position: absolute; width: 16px; height: 16px; left: 3px; top: 3px; background: white; border-radius: 50%; transition: transform 0.18s; }
 input:checked + .toggle-slider { background: var(--mc-purple); }
 input:checked + .toggle-slider:before { transform: translateX(18px); }
+#annualToggle:focus-visible + .toggle-slider { outline: 3px solid var(--mc-purple); outline-offset: 2px; }
 
 /* Total Box */
 .total-box { background: var(--mc-purple); color: white; border-radius: 4px; padding: 22px 26px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; }
-.total-period { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.7); margin-bottom: 4px; }
+.total-period { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.85); margin-bottom: 4px; }
 .total-amount { font-family: var(--font-serif); font-size: 3rem; font-weight: 700; color: white; line-height: 1; }
 .total-meta { text-align: right; }
-.total-meta-lbl { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.65); margin-bottom: 2px; }
-.total-meta-val { font-size: 1.2rem; font-weight: 700; color: rgba(255,255,255,0.95); }
-.total-meta-sub { font-size: 0.74rem; color: rgba(255,255,255,0.6); margin-top: 3px; }
+.total-meta-lbl { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.85); margin-bottom: 2px; }
+.total-meta-val { font-size: 1.2rem; font-weight: 700; color: white; }
+.total-meta-sub { font-size: 0.8rem; color: rgba(255,255,255,0.85); margin-top: 3px; }
 
 /* Fee Breakdown — 100% stacked horizontal bar */
 .breakdown-section { margin-bottom: 24px; }
@@ -258,79 +237,42 @@ input:checked + .toggle-slider:before { transform: translateX(18px); }
   display: inline-block;
 }
 .legend-label { color: var(--mc-black); }
-.legend-pct { color: var(--mc-mid-gray); font-size: 0.74rem; text-align: right; }
+.legend-pct { color: var(--mc-text-gray); font-size: 0.74rem; text-align: right; }
 .legend-amt { font-weight: 600; color: var(--mc-black); text-align: right; font-variant-numeric: tabular-nums; }
 .legend-total { border-top: 1px solid var(--mc-border); padding-top: 6px; margin-top: 2px; }
 .legend-total .legend-label { font-weight: 700; color: var(--mc-purple); }
 .legend-total .legend-amt  { font-weight: 700; color: var(--mc-purple); }
 
-/* Sidebar */
-.sidebar-card { background: white; border: 1px solid var(--mc-border); border-top: 3px solid var(--mc-purple); border-radius: 0 0 4px 4px; margin-bottom: 18px; }
-.sidebar-card-hdr { padding: 12px 16px; border-bottom: 1px solid var(--mc-border); }
-.sidebar-card-hdr h3 { font-family: var(--font-serif); font-size: 0.92rem; font-weight: 700; color: var(--mc-purple); }
-.sidebar-card-body { padding: 12px 16px 14px; }
-.sidebar-card-body p { font-size: 0.8rem; color: var(--mc-dark-gray); line-height: 1.6; margin-bottom: 8px; }
-.sidebar-card-body p:last-child { margin-bottom: 0; }
-.snapshot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
-.snapshot-item { background: var(--mc-purple-light); border-radius: 3px; padding: 9px 8px; text-align: center; }
-.snapshot-val { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 700; color: var(--mc-purple); line-height: 1; }
-.snapshot-lbl { font-size: 0.6rem; color: var(--mc-dark-gray); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px; font-weight: 500; }
-.sidebar-links { list-style: none; }
-.sidebar-links li { border-bottom: 1px solid var(--mc-border); }
-.sidebar-links li:last-child { border-bottom: none; }
-.sidebar-links a { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px; font-size: 0.8rem; color: var(--mc-purple); text-decoration: none; transition: background 0.1s; }
-.sidebar-links a:hover { background: var(--mc-purple-light); }
-.sidebar-links a::after { content: "›"; font-size: 1rem; color: var(--mc-mid-gray); }
+/* Skip link */
+.skip-link { position: absolute; left: -100%; top: auto; background: var(--mc-purple); color: white; padding: 8px 16px; font-weight: 700; font-size: 0.9rem; text-decoration: none; z-index: 9999; border-radius: 0 0 4px 0; }
+.skip-link:focus { left: 0; top: 0; }
 
-/* Footer */
-footer { background: var(--mc-purple); color: rgba(255,255,255,0.8); margin-top: 50px; }
-.footer-inner { max-width: 1200px; margin: 0 auto; padding: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
-.footer-brand { font-weight: 700; color: white; font-size: 0.88rem; }
-.footer-note { font-size: 0.7rem; color: rgba(255,255,255,0.6); line-height: 1.5; max-width: 480px; }
-.footer-note a { color: rgba(255,255,255,0.8); }
-.footer-bottom { background: #3b1860; text-align: center; padding: 9px 24px; font-size: 0.7rem; color: rgba(255,255,255,0.45); }
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  .spinner { animation: none; border-top-color: var(--mc-purple); }
+}
+
+/* Info Cards Row */
+.info-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; }
+@media (max-width: 640px) { .info-cards { grid-template-columns: 1fr; } }
+.info-card { background: white; border: 1px solid var(--mc-border); border-top: 3px solid var(--mc-purple); border-radius: 0 0 4px 4px; }
+.info-card:first-child { border-top-color: var(--mc-sky); }
+.info-card-hdr { padding: 10px 14px; border-bottom: 1px solid var(--mc-border); }
+.info-card-hdr h3 { font-family: var(--font-serif); font-size: 0.88rem; font-weight: 700; color: var(--mc-purple); }
+.info-card-body { padding: 12px 14px; font-size: 0.8rem; color: var(--mc-dark-gray); line-height: 1.6; }
+.info-card-body p { margin-bottom: 7px; }
+.info-card-body p:last-child { margin-bottom: 0; }
+.snapshot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.snapshot-item { background: var(--mc-sky-light); border-radius: 3px; padding: 9px 8px; text-align: center; }
+.snapshot-val { font-family: var(--font-serif); font-size: 1.05rem; font-weight: 700; color: var(--mc-purple); line-height: 1; }
+.snapshot-lbl { font-size: 0.6rem; color: var(--mc-dark-gray); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px; font-weight: 500; }
+
 </style>
 </head>
 <body>
 
-<!-- Utility Bar -->
-<div class="utility-bar">
-  <div class="utility-bar-inner">
-    <a href="https://www.montgomerycollege.edu">montgomerycollege.edu</a>
-    <a href="https://www.montgomerycollege.edu/paying-for-college/tuition/current-rates.html">Current Rates</a>
-    <a href="https://www.montgomerycollege.edu/paying-for-college/financial-aid/index.html">Financial Aid</a>
-    <a href="https://mymc.glb.montgomerycollege.edu">Access MyMC</a>
-  </div>
-</div>
-
-<!-- Header -->
-<header>
-  <div class="header-inner">
-    <a class="mc-logo" href="https://www.montgomerycollege.edu" aria-label="Montgomery College home">
-      <div class="mc-logo-mark" aria-hidden="true">MC</div>
-      <div class="mc-logo-text">
-        <span class="mc-logo-name">Montgomery College</span>
-        <span class="mc-logo-sub">Montgomery County, Maryland</span>
-      </div>
-    </a>
-    <div class="header-right">
-      <div class="header-page-title">Tuition &amp; Fee Calculator</div>
-      <div class="header-tagline">Exceptional Education. Extraordinary Outcomes.</div>
-    </div>
-  </div>
-</header>
-
-<!-- Breadcrumb -->
-<div class="breadcrumb-bar">
-  <div class="breadcrumb-inner">
-    <ol class="breadcrumb">
-      <li><a href="https://www.montgomerycollege.edu">Home</a></li>
-      <li><a href="https://www.montgomerycollege.edu/paying-for-college/index.html">Paying for College</a></li>
-      <li><a href="https://www.montgomerycollege.edu/paying-for-college/tuition/current-rates.html">Tuition</a></li>
-      <li>Tuition Calculator</li>
-    </ol>
-  </div>
-</div>
+<a href="#main-content" class="skip-link">Skip to main content</a>
 
 <!-- Main -->
 <div class="page-wrapper">
@@ -345,8 +287,8 @@ footer { background: var(--mc-purple); color: rgba(255,255,255,0.8); margin-top:
     </div>
 
     <!-- Data status banner -->
-    <div class="data-status loading" id="dataStatus">
-      <div class="spinner"></div>
+    <div class="data-status loading" id="dataStatus" role="status" aria-live="polite" aria-atomic="true">
+      <div class="spinner" aria-hidden="true"></div>
       <span id="dataStatusMsg">Loading fee schedule data…</span>
     </div>
 
@@ -410,8 +352,8 @@ footer { background: var(--mc-purple); color: rgba(255,255,255,0.8); margin-top:
       <h2 class="section-heading">Select Credit Hours</h2>
       <div class="slider-header">
         <div class="slider-label-block">
-          <div class="lbl">Credit Hours</div>
-          <div class="sub">Drag the slider or use quick-select buttons below</div>
+          <div class="lbl" id="sliderLbl">Credit Hours</div>
+          <div class="sub" id="sliderDesc">Drag the slider or use the quick-select buttons below</div>
         </div>
         <div class="credit-display" id="creditDisplay" aria-live="polite" aria-atomic="true">
           12 <span class="unit">credits</span>
@@ -426,7 +368,8 @@ footer { background: var(--mc-purple); color: rgba(255,255,255,0.8); margin-top:
         </div>
 
         <input type="range" id="creditSlider" min="1" max="18" value="12"
-               oninput="update()" aria-label="Credit hours" aria-valuemin="1" aria-valuemax="18">
+               oninput="update()" aria-labelledby="sliderLbl" aria-describedby="sliderDesc"
+               aria-valuemin="1" aria-valuemax="18" aria-valuenow="12" aria-valuetext="12 credit hours">
 
         <!-- Tick marks positioned by JS using measured slider width -->
         <div class="slider-ticks-wrap" aria-hidden="true" id="ticksWrap"></div>
@@ -441,7 +384,7 @@ footer { background: var(--mc-purple); color: rgba(255,255,255,0.8); margin-top:
           <input type="checkbox" id="annualToggle" onchange="update()" aria-label="Show annual two-semester estimate">
           <span class="toggle-slider"></span>
         </label>
-        <span>Show annual estimate (×2 semesters)</span>
+        <span>Show annual estimate <span aria-label="times 2 semesters">(×2 semesters)</span></span>
       </div>
     </div>
 
@@ -449,7 +392,7 @@ footer { background: var(--mc-purple); color: rgba(255,255,255,0.8); margin-top:
     <div class="total-box" id="totalBox" style="display:none" role="region" aria-label="Total estimated cost">
       <div>
         <div class="total-period" id="totalPeriod">Semester Total</div>
-        <div class="total-amount" id="totalAmount">—</div>
+        <div class="total-amount" id="totalAmount" aria-live="polite" aria-atomic="true">—</div>
       </div>
       <div class="total-meta">
         <div class="total-meta-lbl">Avg. Cost Per Credit</div>
@@ -463,7 +406,7 @@ footer { background: var(--mc-purple); color: rgba(255,255,255,0.8); margin-top:
       <h2 class="section-heading">Cost Breakdown</h2>
 
       <!-- Stacked bar -->
-      <div class="stacked-bar-wrap" role="img" aria-label="Fee category breakdown chart">
+      <div class="stacked-bar-wrap" role="img" id="stackedBarWrap" aria-label="Fee category breakdown chart">
         <div class="stacked-bar" id="stackedBar">
           <div class="stacked-seg" id="seg-t" style="background:var(--mc-purple)"></div>
           <div class="stacked-seg" id="seg-c" style="background:var(--mc-blue)"></div>
@@ -476,37 +419,37 @@ footer { background: var(--mc-purple); color: rgba(255,255,255,0.8); margin-top:
       <!-- Legend + amounts -->
       <div class="stacked-legend" id="stackedLegend">
         <div class="legend-row">
-          <span class="legend-swatch" style="background:var(--mc-purple)"></span>
+          <span class="legend-swatch" style="background:var(--mc-purple)" aria-hidden="true"></span>
           <span class="legend-label">Tuition</span>
           <span class="legend-pct" id="lpct-t"></span>
           <span class="legend-amt" id="lamt-t"></span>
         </div>
         <div class="legend-row">
-          <span class="legend-swatch" style="background:var(--mc-blue)"></span>
+          <span class="legend-swatch" style="background:var(--mc-blue)" aria-hidden="true"></span>
           <span class="legend-label">Consolidated Fee</span>
           <span class="legend-pct" id="lpct-c"></span>
           <span class="legend-amt" id="lamt-c"></span>
         </div>
         <div class="legend-row">
-          <span class="legend-swatch" style="background:var(--mc-orange)"></span>
+          <span class="legend-swatch" style="background:var(--mc-orange)" aria-hidden="true"></span>
           <span class="legend-label">Major Facility Fee</span>
           <span class="legend-pct" id="lpct-f"></span>
           <span class="legend-amt" id="lamt-f"></span>
         </div>
         <div class="legend-row">
-          <span class="legend-swatch" style="background:var(--mc-green)"></span>
+          <span class="legend-swatch" style="background:var(--mc-green)" aria-hidden="true"></span>
           <span class="legend-label">Technology Fee</span>
           <span class="legend-pct" id="lpct-te"></span>
           <span class="legend-amt" id="lamt-te"></span>
         </div>
         <div class="legend-row">
-          <span class="legend-swatch" style="background:var(--mc-mid-gray)"></span>
+          <span class="legend-swatch" style="background:var(--mc-mid-gray)" aria-hidden="true"></span>
           <span class="legend-label">Transportation Fee</span>
           <span class="legend-pct" id="lpct-tr"></span>
           <span class="legend-amt" id="lamt-tr"></span>
         </div>
         <div class="legend-row legend-total">
-          <span class="legend-swatch" style="background:transparent"></span>
+          <span class="legend-swatch" style="background:transparent" aria-hidden="true"></span>
           <span class="legend-label">Total</span>
           <span class="legend-pct"></span>
           <span class="legend-amt" id="lamt-tot"></span>
@@ -514,68 +457,43 @@ footer { background: var(--mc-purple); color: rgba(255,255,255,0.8); margin-top:
       </div>
     </div>
 
-  </main>
+    <!-- Info Cards -->
+    <div class="info-cards" id="infoCards" style="display:none">
 
-  <!-- Sidebar -->
-  <aside class="sidebar">
-
-    <div class="sidebar-card">
-      <div class="sidebar-card-hdr"><h3>Your Cost Snapshot</h3></div>
-      <div class="sidebar-card-body">
-        <div class="snapshot-grid">
-          <div class="snapshot-item"><div class="snapshot-val" id="snapSem">—</div><div class="snapshot-lbl">Semester</div></div>
-          <div class="snapshot-item"><div class="snapshot-val" id="snapAnn">—</div><div class="snapshot-lbl">Annual Est.</div></div>
-          <div class="snapshot-item"><div class="snapshot-val" id="snapCr">—</div><div class="snapshot-lbl">Avg/Credit</div></div>
-          <div class="snapshot-item"><div class="snapshot-val" id="snapHrs">12</div><div class="snapshot-lbl">Credits</div></div>
+      <div class="info-card">
+        <div class="info-card-hdr"><h3>Your Cost Snapshot</h3></div>
+        <div class="info-card-body">
+          <div class="snapshot-grid">
+            <div class="snapshot-item"><div class="snapshot-val" id="snapSem">—</div><div class="snapshot-lbl">Semester</div></div>
+            <div class="snapshot-item"><div class="snapshot-val" id="snapAnn">—</div><div class="snapshot-lbl">Annual Est.</div></div>
+            <div class="snapshot-item"><div class="snapshot-val" id="snapCr">—</div><div class="snapshot-lbl">Avg/Credit</div></div>
+            <div class="snapshot-item"><div class="snapshot-val" id="snapHrs">12</div><div class="snapshot-lbl">Credits</div></div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="sidebar-card">
-      <div class="sidebar-card-hdr"><h3>About the Fees</h3></div>
-      <div class="sidebar-card-body">
-        <p><strong>Consolidated Fee:</strong> 20% of tuition (min. $50). Non-refundable after the first week of classes.</p>
-        <p><strong>Major Facility Fee:</strong> Funds capital facilities projects. Non-refundable.</p>
-        <p><strong>Technology Fee:</strong> Offsets instructional technology costs. Non-refundable.</p>
-        <p><strong>Transportation Fee:</strong> Supports transportation operations. Non-refundable.</p>
+      <div class="info-card">
+        <div class="info-card-hdr"><h3>About the Fees</h3></div>
+        <div class="info-card-body">
+          <p><strong>Consolidated Fee:</strong> 20% of tuition (min. $50). Non-refundable after the first week of classes.</p>
+          <p><strong>Major Facility Fee:</strong> Funds capital facilities projects. Non-refundable.</p>
+          <p><strong>Technology Fee:</strong> Offsets instructional technology costs. Non-refundable.</p>
+          <p><strong>Transportation Fee:</strong> Supports transportation operations. Non-refundable.</p>
+        </div>
       </div>
-    </div>
 
-    <div class="sidebar-card">
-      <div class="sidebar-card-hdr"><h3>Paying for College</h3></div>
-      <ul class="sidebar-links">
-        <li><a href="https://www.montgomerycollege.edu/paying-for-college/tuition/current-rates.html">Current Tuition Rates</a></li>
-        <li><a href="https://www.montgomerycollege.edu/paying-for-college/financial-aid/index.html">Financial Aid</a></li>
-        <li><a href="https://www.montgomerycollege.edu/paying-for-college/tuition/net-price-calculator.html">Net Price Calculator</a></li>
-        <li><a href="https://www.montgomerycollege.edu/paying-for-college/payments/options.html">Payment Options</a></li>
-        <li><a href="https://www.montgomerycollege.edu/paying-for-college/tuition/residency-policy-and-appeals.html">Residency Policy</a></li>
-        <li><a href="https://www.montgomerycollege.edu/paying-for-college/tuition/special-tuition-waivers.html">Special Tuition Waivers</a></li>
-      </ul>
-    </div>
-
-    <div class="sidebar-card">
-      <div class="sidebar-card-hdr"><h3>Important Note</h3></div>
-      <div class="sidebar-card-body">
-        <p>This calculator covers <strong>credit courses only</strong>. One course ≈ 3 credit hours. Full-time = 12+ credits.</p>
-        <p>Some courses carry <a href="https://www.montgomerycollege.edu/paying-for-college/tuition/fees.html">additional fees</a>. For noncredit/WDCE courses, call <a href="tel:240-567-5188">240-567-5188</a>.</p>
+      <div class="info-card">
+        <div class="info-card-hdr"><h3>Important Note</h3></div>
+        <div class="info-card-body">
+          <p>This calculator covers <strong>credit courses only</strong>. One course ≈ 3 credit hours. Full-time = 12+ credits.</p>
+          <p>Some courses carry <a href="https://www.montgomerycollege.edu/paying-for-college/tuition/fees.html">additional fees</a>. For noncredit/WDCE courses, call <a href="tel:240-567-5188">240-567-5188</a>.</p>
+        </div>
       </div>
+
     </div>
 
-  </aside>
+  </main>
 </div>
-
-<!-- Footer -->
-<footer>
-  <div class="footer-inner">
-    <div class="footer-brand">Montgomery College</div>
-    <div class="footer-note">
-      Tuition and fees are approved by the Board of Trustees and are subject to change.
-      This calculator is for planning purposes only. For current rates, visit
-      <a href="https://www.montgomerycollege.edu/paying-for-college/tuition/current-rates.html">montgomerycollege.edu</a>.
-    </div>
-  </div>
-  <div class="footer-bottom">© 2026 Montgomery College. All Rights Reserved. · 240-567-5000</div>
-</footer>
 
 <script>
 // ══════════════════════════════════════════════════════════════════
@@ -757,6 +675,7 @@ function buildPresets() {
     btn.className  = 'preset-btn';
     btn.dataset.hr = p.hr;
     btn.textContent = p.label;
+    btn.setAttribute('aria-label', p.hr + ' credit hours');
     btn.onclick = () => setCredits(p.hr);
     row.appendChild(btn);
   });
@@ -800,6 +719,11 @@ function update() {
   if (!row) return;
   const total = row.tot * m;
 
+  // Update slider ARIA value
+  const sliderEl = document.getElementById('creditSlider');
+  sliderEl.setAttribute('aria-valuenow', hrs);
+  sliderEl.setAttribute('aria-valuetext', hrs + ' credit ' + (hrs === 1 ? 'hour' : 'hours'));
+
   // Credit display
   document.getElementById('creditDisplay').innerHTML =
     hrs + ' <span class="unit">' + (hrs === 1 ? 'credit' : 'credits') + '</span>';
@@ -837,6 +761,14 @@ function update() {
   });
   document.getElementById('lamt-tot').textContent = fmt(total);
 
+  // Update stacked bar accessible description
+  document.getElementById('stackedBarWrap').setAttribute('aria-label',
+    'Cost breakdown: Tuition ' + p(row.t, row.tot) +
+    ', Consolidated Fee ' + p(row.c, row.tot) +
+    ', Major Facility Fee ' + p(row.fac, row.tot) +
+    ', Technology Fee ' + p(row.tech, row.tot) +
+    ', Transportation Fee ' + p(row.trans, row.tot));
+
   // Custom track fill — use same pixel math as tick positions
   const slider  = document.getElementById('creditSlider');
   const sliderW = slider.offsetWidth;
@@ -845,7 +777,7 @@ function update() {
     : ((hrs - minHrs) / (maxHrs - minHrs) * 100);
   document.getElementById('trackFill').style.width = fillPct + '%';
 
-  // Sidebar snapshot
+  // Cost snapshot
   document.getElementById('snapSem').textContent = fmtS(row.tot);
   document.getElementById('snapAnn').textContent = fmtS(row.tot * 2);
   document.getElementById('snapCr').textContent  = fmtS(row.tot / hrs);
@@ -873,6 +805,8 @@ function onYearChange() {
   const slider = document.getElementById('creditSlider');
   slider.min = minHrs;
   slider.max = maxHrs;
+  slider.setAttribute('aria-valuemin', minHrs);
+  slider.setAttribute('aria-valuemax', maxHrs);
   // Keep current value within new range
   const curHrs = parseInt(slider.value);
   if (curHrs < minHrs) slider.value = minHrs;
@@ -887,7 +821,7 @@ function onYearChange() {
 // ── Reveal UI sections ─────────────────────────────────────────────
 function showUI() {
   ['controlsRow', 'residencySection', 'sliderSection',
-   'totalBox', 'breakdownSection'].forEach(id => {
+   'totalBox', 'breakdownSection', 'infoCards'].forEach(id => {
     document.getElementById(id).style.display = '';
   });
 }

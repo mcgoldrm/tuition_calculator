@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tuition Calculator | Montgomery College</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --mc-purple:       #51237F;
+  --mc-purple-tint:  #6E4D94;
+  --mc-purple-light: #EFE8F8;
+  --mc-purple-mid:   #C9B4E0;
+  --mc-dark-gray:    #666666;
+  --mc-mid-gray:     #9FA1A4;
+  --mc-light-gray:   #F5F5F5;
+  --mc-border:       #DEDEDE;
+  --mc-white:        #FFFFFF;
+  --mc-black:        #1a1a1a;
+  --mc-orange:       #E85C2A;
+  --mc-blue:         #0079C1;
+  --mc-green:        #00A86B;
+  --font-sans:       'Roboto', Arial, sans-serif;
+  --font-serif:      'Roboto Slab', Georgia, serif;
+  --thumb-size:      22px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); font-size: 16px; color: var(--mc-black); background: #fff; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+a { color: var(--mc-purple); }
+
+/* Utility Bar */
+.utility-bar { background: var(--mc-light-gray); border-bottom: 1px solid var(--mc-border); padding: 6px 0; }
+.utility-bar-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; justify-content: flex-end; gap: 20px; align-items: center; }
+.utility-bar a { font-size: 0.75rem; color: var(--mc-dark-gray); text-decoration: none; font-weight: 500; }
+.utility-bar a:hover { color: var(--mc-purple); text-decoration: underline; }
+
+/* Header */
+header { background: var(--mc-white); border-bottom: 4px solid var(--mc-purple); padding: 14px 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+.header-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.mc-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.mc-logo-mark { width: 50px; height: 50px; background: var(--mc-purple); border-radius: 3px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Roboto', Arial, sans-serif; font-size: 20px; font-weight: 700; color: white; letter-spacing: -1px; }
+.mc-logo-text { display: flex; flex-direction: column; }
+.mc-logo-name { font-weight: 700; font-size: 1.05rem; color: var(--mc-purple); line-height: 1.1; }
+.mc-logo-sub  { font-size: 0.67rem; color: var(--mc-dark-gray); letter-spacing: 0.04em; text-transform: uppercase; }
+.header-right { text-align: right; }
+.header-page-title { font-weight: 700; font-size: 0.82rem; color: var(--mc-purple); }
+.header-tagline { font-size: 0.68rem; color: var(--mc-dark-gray); font-style: italic; }
+
+/* Breadcrumb */
+.breadcrumb-bar { background: var(--mc-light-gray); border-bottom: 1px solid var(--mc-border); padding: 9px 0; }
+.breadcrumb-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.breadcrumb { list-style: none; display: flex; flex-wrap: wrap; font-size: 0.78rem; color: var(--mc-dark-gray); }
+.breadcrumb li + li::before { content: " › "; margin: 0 5px; color: var(--mc-mid-gray); }
+.breadcrumb a { color: var(--mc-purple); text-decoration: none; }
+.breadcrumb a:hover { text-decoration: underline; }
+
+/* Layout */
+.page-wrapper { max-width: 1200px; margin: 32px auto 0; padding: 0 24px 80px; display: grid; grid-template-columns: 1fr 260px; gap: 40px; align-items: start; }
+@media (max-width: 860px)  { .page-wrapper { grid-template-columns: 1fr; } .sidebar { order: -1; } }
+@media (max-width: 560px)  { .page-wrapper { padding: 0 16px 60px; } .header-right { display: none; } }
+
+/* Page Title */
+.page-title-area { margin-bottom: 28px; }
+.page-title-area h1 { font-family: var(--font-serif); font-size: 1.9rem; color: var(--mc-purple); line-height: 1.2; margin-bottom: 8px; }
+.page-intro { font-size: 0.92rem; color: var(--mc-dark-gray); line-height: 1.7; max-width: 640px; }
+
+/* Section Heading */
+.section-heading { font-family: var(--font-serif); font-size: 1.05rem; font-weight: 700; color: var(--mc-purple); border-bottom: 2px solid var(--mc-purple-mid); padding-bottom: 7px; margin-bottom: 14px; }
+
+/* Loading / Error States */
+.data-status { padding: 16px 20px; border-radius: 4px; font-size: 0.85rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+.data-status.loading { background: var(--mc-purple-light); color: var(--mc-purple); border: 1px solid var(--mc-purple-mid); }
+.data-status.error   { background: #fdf0ee; color: #b03a20; border: 1px solid #f5c2b6; }
+.data-status.success { background: #eaf6f0; color: #0d6b3f; border: 1px solid #a8dfc3; display: none; }
+.spinner { width: 16px; height: 16px; border: 2px solid var(--mc-purple-mid); border-top-color: var(--mc-purple); border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Academic Year + Controls Row */
+.controls-row { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; margin-bottom: 24px; }
+.control-group { display: flex; flex-direction: column; gap: 5px; }
+.control-group label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--mc-dark-gray); }
+.control-group select {
+  font-family: var(--font-sans); font-size: 0.88rem; font-weight: 500;
+  color: var(--mc-black); background: white;
+  border: 2px solid var(--mc-purple-mid); border-radius: 4px;
+  padding: 8px 32px 8px 12px; cursor: pointer;
+  appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2351237F' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 10px center;
+  min-width: 150px; transition: border-color 0.15s;
+}
+.control-group select:focus { outline: none; border-color: var(--mc-purple); box-shadow: 0 0 0 3px rgba(81,35,127,0.15); }
+.csv-source-note { font-size: 0.7rem; color: var(--mc-mid-gray); margin-top: 2px; }
+.csv-source-note a { color: var(--mc-purple); font-size: 0.7rem; }
+
+/* Residency Tabs */
+.residency-section { margin-bottom: 24px; }
+.res-tab-group { display: flex; border: 2px solid var(--mc-border); border-radius: 4px; overflow: hidden; }
+.res-tab { flex: 1; position: relative; cursor: pointer; }
+.res-tab input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
+.res-tab-label { display: flex; flex-direction: column; align-items: center; padding: 13px 8px 11px; cursor: pointer; text-align: center; border-right: 1px solid var(--mc-border); background: #fafafa; transition: background 0.12s; height: 100%; }
+.res-tab:last-child .res-tab-label { border-right: none; }
+.res-tab-label:hover { background: var(--mc-purple-light); }
+.res-tab input:checked + .res-tab-label { background: var(--mc-purple); }
+.res-tab-icon  { margin-bottom: 5px; line-height: 1; color: var(--mc-mid-gray); display: flex; align-items: center; justify-content: center; }
+.res-tab input:checked + .res-tab-label .res-tab-icon { color: white; }
+.res-tab-title { font-size: 0.74rem; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; color: var(--mc-dark-gray); display: block; line-height: 1.2; }
+.res-tab input:checked + .res-tab-label .res-tab-title { color: white; }
+.res-tab-rate  { font-size: 0.65rem; color: var(--mc-mid-gray); margin-top: 3px; display: block; }
+.res-tab input:checked + .res-tab-label .res-tab-rate { color: rgba(255,255,255,0.75); }
+
+/* Slider Panel */
+.slider-section { background: var(--mc-light-gray); border: 1px solid var(--mc-border); border-left: 4px solid var(--mc-purple); border-radius: 0 4px 4px 0; padding: 22px 26px; margin-bottom: 24px; }
+.slider-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 18px; flex-wrap: wrap; gap: 8px; }
+.slider-label-block .lbl { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--mc-dark-gray); }
+.slider-label-block .sub { font-size: 0.72rem; color: var(--mc-mid-gray); margin-top: 1px; }
+.credit-display { font-family: var(--font-serif); font-size: 2.6rem; font-weight: 700; color: var(--mc-purple); line-height: 1; }
+.credit-display .unit { font-size: 0.85rem; font-family: var(--font-sans); color: var(--mc-dark-gray); font-weight: 400; margin-left: 4px; }
+
+/* ── Custom Slider ────────────────────────────────────────────────── */
+/*
+  Strategy: hide the native track entirely, overlay a custom div track,
+  and position tick labels using JS-measured offsetWidth of the slider
+  so ticks land exactly under the thumb at each value.
+*/
+.slider-outer { position: relative; padding-bottom: 28px; }
+
+/* Hide native track, keep thumb */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 20px;          /* tall enough for thumb; background = transparent */
+  background: transparent;
+  outline: none;
+  cursor: pointer;
+  display: block;
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  padding: 0;
+}
+/* Custom track drawn below via .slider-track-bg */
+input[type="range"]::-webkit-slider-runnable-track { background: transparent; height: 5px; }
+input[type="range"]::-moz-range-track               { background: transparent; height: 5px; }
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: var(--thumb-size); height: var(--thumb-size);
+  border-radius: 50%;
+  background: var(--mc-purple);
+  cursor: pointer;
+  border: 3px solid white;
+  box-shadow: 0 1px 6px rgba(81,35,127,0.35);
+  transition: box-shadow 0.12s;
+  margin-top: -8px; /* center on 5px track: (5-22)/2 = -8.5 */
+}
+input[type="range"]:hover::-webkit-slider-thumb { box-shadow: 0 2px 10px rgba(81,35,127,0.5); }
+input[type="range"]::-moz-range-thumb {
+  width: var(--thumb-size); height: var(--thumb-size); border-radius: 50%;
+  background: var(--mc-purple); cursor: pointer; border: 3px solid white;
+  box-shadow: 0 1px 6px rgba(81,35,127,0.35);
+}
+
+/* Custom drawn track sits behind the range input */
+.slider-track-bg {
+  position: absolute;
+  top: 7px;          /* (20px input height - 5px track) / 2 + tiny nudge */
+  left: 0; right: 0;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--mc-border);
+  z-index: 1;
+  pointer-events: none;
+}
+.slider-track-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--mc-purple);
+  transition: width 0.05s linear;
+}
+
+/*
+  Tick container. Ticks are positioned by JS using the slider's actual
+  rendered usable width (slider.offsetWidth minus thumb radius on each side).
+  The container itself is full-width; each tick uses absolute left positioning.
+*/
+.slider-ticks-wrap {
+  position: absolute;
+  bottom: 0;
+  left: 0; right: 0;
+  height: 24px;
+  pointer-events: none;
+}
+.tick-mark {
+  position: absolute;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+.tick-mark .tick-line { width: 1px; height: 4px; background: var(--mc-mid-gray); }
+.tick-mark .tick-label { font-size: 0.62rem; color: var(--mc-mid-gray); font-weight: 500; white-space: nowrap; }
+
+/* Presets */
+.preset-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--mc-border); }
+.preset-lbl { font-size: 0.7rem; color: var(--mc-mid-gray); font-weight: 500; margin-right: 2px; }
+.preset-btn { padding: 4px 11px; border-radius: 3px; border: 1.5px solid var(--mc-purple-mid); background: white; font-size: 0.72rem; font-family: var(--font-sans); cursor: pointer; color: var(--mc-purple); font-weight: 500; transition: all 0.1s; }
+.preset-btn:hover { background: var(--mc-purple-light); border-color: var(--mc-purple); }
+.preset-btn.active { background: var(--mc-purple); color: white; border-color: var(--mc-purple); }
+
+/* Annual toggle */
+.annual-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; font-size: 0.8rem; color: var(--mc-dark-gray); }
+.toggle-switch { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider { position: absolute; inset: 0; background: var(--mc-mid-gray); border-radius: 11px; cursor: pointer; transition: background 0.18s; }
+.toggle-slider:before { content: ''; position: absolute; width: 16px; height: 16px; left: 3px; top: 3px; background: white; border-radius: 50%; transition: transform 0.18s; }
+input:checked + .toggle-slider { background: var(--mc-purple); }
+input:checked + .toggle-slider:before { transform: translateX(18px); }
+
+/* Total Box */
+.total-box { background: var(--mc-purple); color: white; border-radius: 4px; padding: 22px 26px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; }
+.total-period { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.7); margin-bottom: 4px; }
+.total-amount { font-family: var(--font-serif); font-size: 3rem; font-weight: 700; color: white; line-height: 1; }
+.total-meta { text-align: right; }
+.total-meta-lbl { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.65); margin-bottom: 2px; }
+.total-meta-val { font-size: 1.2rem; font-weight: 700; color: rgba(255,255,255,0.95); }
+.total-meta-sub { font-size: 0.74rem; color: rgba(255,255,255,0.6); margin-top: 3px; }
+
+/* Fee Breakdown — 100% stacked horizontal bar */
+.breakdown-section { margin-bottom: 24px; }
+.stacked-bar-wrap { margin-bottom: 10px; }
+.stacked-bar {
+  display: flex;
+  height: 36px;
+  border-radius: 4px;
+  overflow: hidden;
+  width: 100%;
+}
+.stacked-seg {
+  height: 100%;
+  transition: width 0.35s cubic-bezier(.4,0,.2,1);
+  min-width: 0;
+}
+.stacked-legend { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+.legend-row {
+  display: grid;
+  grid-template-columns: 14px 1fr 52px 80px;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+}
+.legend-swatch {
+  width: 12px; height: 12px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  display: inline-block;
+}
+.legend-label { color: var(--mc-black); }
+.legend-pct { color: var(--mc-mid-gray); font-size: 0.74rem; text-align: right; }
+.legend-amt { font-weight: 600; color: var(--mc-black); text-align: right; font-variant-numeric: tabular-nums; }
+.legend-total { border-top: 1px solid var(--mc-border); padding-top: 6px; margin-top: 2px; }
+.legend-total .legend-label { font-weight: 700; color: var(--mc-purple); }
+.legend-total .legend-amt  { font-weight: 700; color: var(--mc-purple); }
+
+/* Sidebar */
+.sidebar-card { background: white; border: 1px solid var(--mc-border); border-top: 3px solid var(--mc-purple); border-radius: 0 0 4px 4px; margin-bottom: 18px; }
+.sidebar-card-hdr { padding: 12px 16px; border-bottom: 1px solid var(--mc-border); }
+.sidebar-card-hdr h3 { font-family: var(--font-serif); font-size: 0.92rem; font-weight: 700; color: var(--mc-purple); }
+.sidebar-card-body { padding: 12px 16px 14px; }
+.sidebar-card-body p { font-size: 0.8rem; color: var(--mc-dark-gray); line-height: 1.6; margin-bottom: 8px; }
+.sidebar-card-body p:last-child { margin-bottom: 0; }
+.snapshot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.snapshot-item { background: var(--mc-purple-light); border-radius: 3px; padding: 9px 8px; text-align: center; }
+.snapshot-val { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 700; color: var(--mc-purple); line-height: 1; }
+.snapshot-lbl { font-size: 0.6rem; color: var(--mc-dark-gray); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px; font-weight: 500; }
+.sidebar-links { list-style: none; }
+.sidebar-links li { border-bottom: 1px solid var(--mc-border); }
+.sidebar-links li:last-child { border-bottom: none; }
+.sidebar-links a { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px; font-size: 0.8rem; color: var(--mc-purple); text-decoration: none; transition: background 0.1s; }
+.sidebar-links a:hover { background: var(--mc-purple-light); }
+.sidebar-links a::after { content: "›"; font-size: 1rem; color: var(--mc-mid-gray); }
+
+/* Footer */
+footer { background: var(--mc-purple); color: rgba(255,255,255,0.8); margin-top: 50px; }
+.footer-inner { max-width: 1200px; margin: 0 auto; padding: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.footer-brand { font-weight: 700; color: white; font-size: 0.88rem; }
+.footer-note { font-size: 0.7rem; color: rgba(255,255,255,0.6); line-height: 1.5; max-width: 480px; }
+.footer-note a { color: rgba(255,255,255,0.8); }
+.footer-bottom { background: #3b1860; text-align: center; padding: 9px 24px; font-size: 0.7rem; color: rgba(255,255,255,0.45); }
+</style>
+</head>
+<body>
+
+<!-- Utility Bar -->
+<div class="utility-bar">
+  <div class="utility-bar-inner">
+    <a href="https://www.montgomerycollege.edu">montgomerycollege.edu</a>
+    <a href="https://www.montgomerycollege.edu/paying-for-college/tuition/current-rates.html">Current Rates</a>
+    <a href="https://www.montgomerycollege.edu/paying-for-college/financial-aid/index.html">Financial Aid</a>
+    <a href="https://mymc.glb.montgomerycollege.edu">Access MyMC</a>
+  </div>
+</div>
+
+<!-- Header -->
+<header>
+  <div class="header-inner">
+    <a class="mc-logo" href="https://www.montgomerycollege.edu" aria-label="Montgomery College home">
+      <div class="mc-logo-mark" aria-hidden="true">MC</div>
+      <div class="mc-logo-text">
+        <span class="mc-logo-name">Montgomery College</span>
+        <span class="mc-logo-sub">Montgomery County, Maryland</span>
+      </div>
+    </a>
+    <div class="header-right">
+      <div class="header-page-title">Tuition &amp; Fee Calculator</div>
+      <div class="header-tagline">Exceptional Education. Extraordinary Outcomes.</div>
+    </div>
+  </div>
+</header>
+
+<!-- Breadcrumb -->
+<div class="breadcrumb-bar">
+  <div class="breadcrumb-inner">
+    <ol class="breadcrumb">
+      <li><a href="https://www.montgomerycollege.edu">Home</a></li>
+      <li><a href="https://www.montgomerycollege.edu/paying-for-college/index.html">Paying for College</a></li>
+      <li><a href="https://www.montgomerycollege.edu/paying-for-college/tuition/current-rates.html">Tuition</a></li>
+      <li>Tuition Calculator</li>
+    </ol>
+  </div>
+</div>
+
+<!-- Main -->
+<div class="page-wrapper">
+  <main id="main-content">
+
+    <div class="page-title-area">
+      <h1>Tuition &amp; Fee Calculator</h1>
+      <p class="page-intro">
+        Estimate your tuition and fees based on your residency status and credit hours.
+        Rates are approved by the <a href="https://www.montgomerycollege.edu/about-mc/leadership/board-of-trustees/index.html">Board of Trustees</a> and are subject to change.
+      </p>
+    </div>
+
+    <!-- Data status banner -->
+    <div class="data-status loading" id="dataStatus">
+      <div class="spinner"></div>
+      <span id="dataStatusMsg">Loading fee schedule data…</span>
+    </div>
+
+    <!-- Academic Year + Controls -->
+    <div class="controls-row" id="controlsRow" style="display:none">
+      <div class="control-group">
+        <label for="yearSelect">Academic Year</label>
+        <select id="yearSelect" onchange="onYearChange()"></select>
+      </div>
+    </div>
+
+    <!-- Residency -->
+    <div class="residency-section" id="residencySection" style="display:none">
+      <h2 class="section-heading">Select Your Residency Status</h2>
+      <div class="res-tab-group" role="group" aria-label="Residency status">
+        <label class="res-tab">
+          <input type="radio" name="residency" value="0" checked onchange="setResidency(0)">
+          <span class="res-tab-label">
+            <span class="res-tab-icon" aria-hidden="true">
+              <!-- Solid house icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" fill="currentColor">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+              </svg>
+            </span>
+            <span class="res-tab-title">Montgomery County</span>
+            <span class="res-tab-rate" id="rateCounty">Code 1 · $134/credit</span>
+          </span>
+        </label>
+        <label class="res-tab">
+          <input type="radio" name="residency" value="1" onchange="setResidency(1)">
+          <span class="res-tab-label">
+            <span class="res-tab-icon" aria-hidden="true">
+              <!-- Map pin with MD label — solid, single color via currentColor -->
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 28" width="22" height="26" fill="currentColor">
+                <path d="M12 0C7.16 0 3 4.16 3 9c0 6.75 9 19 9 19s9-12.25 9-19c0-4.84-4.16-9-9-9z"/>
+                <text x="12" y="11.5" text-anchor="middle" font-size="5.2" font-family="Arial,sans-serif" font-weight="700" fill="white" letter-spacing="0">MD</text>
+              </svg>
+            </span>
+            <span class="res-tab-title">MD State Resident</span>
+            <span class="res-tab-rate" id="rateState">Code 2 · $273/credit</span>
+          </span>
+        </label>
+        <label class="res-tab">
+          <input type="radio" name="residency" value="2" onchange="setResidency(2)">
+          <span class="res-tab-label">
+            <span class="res-tab-icon" aria-hidden="true">
+              <!-- Solid globe icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+              </svg>
+            </span>
+            <span class="res-tab-title">Non-Resident</span>
+            <span class="res-tab-rate" id="rateNonres">Code 3 · $380/credit</span>
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Slider -->
+    <div class="slider-section" id="sliderSection" style="display:none">
+      <h2 class="section-heading">Select Credit Hours</h2>
+      <div class="slider-header">
+        <div class="slider-label-block">
+          <div class="lbl">Credit Hours</div>
+          <div class="sub">Drag the slider or use quick-select buttons below</div>
+        </div>
+        <div class="credit-display" id="creditDisplay" aria-live="polite" aria-atomic="true">
+          12 <span class="unit">credits</span>
+        </div>
+      </div>
+
+      <!-- Slider with custom drawn track for precise tick alignment -->
+      <div class="slider-outer" id="sliderOuter">
+        <!-- Custom track drawn behind the range input -->
+        <div class="slider-track-bg">
+          <div class="slider-track-fill" id="trackFill"></div>
+        </div>
+
+        <input type="range" id="creditSlider" min="1" max="18" value="12"
+               oninput="update()" aria-label="Credit hours" aria-valuemin="1" aria-valuemax="18">
+
+        <!-- Tick marks positioned by JS using measured slider width -->
+        <div class="slider-ticks-wrap" aria-hidden="true" id="ticksWrap"></div>
+      </div>
+
+      <div class="preset-row" id="presetRow">
+        <span class="preset-lbl">Quick select:</span>
+        <!-- Populated by JS -->
+      </div>
+      <div class="annual-row">
+        <label class="toggle-switch">
+          <input type="checkbox" id="annualToggle" onchange="update()" aria-label="Show annual two-semester estimate">
+          <span class="toggle-slider"></span>
+        </label>
+        <span>Show annual estimate (×2 semesters)</span>
+      </div>
+    </div>
+
+    <!-- Total -->
+    <div class="total-box" id="totalBox" style="display:none" role="region" aria-label="Total estimated cost">
+      <div>
+        <div class="total-period" id="totalPeriod">Semester Total</div>
+        <div class="total-amount" id="totalAmount">—</div>
+      </div>
+      <div class="total-meta">
+        <div class="total-meta-lbl">Avg. Cost Per Credit</div>
+        <div class="total-meta-val" id="perCredit">—</div>
+        <div class="total-meta-sub" id="residencyLabel">Montgomery County Resident</div>
+      </div>
+    </div>
+
+    <!-- Fee Breakdown — 100% stacked horizontal bar -->
+    <div class="breakdown-section" id="breakdownSection" style="display:none">
+      <h2 class="section-heading">Cost Breakdown</h2>
+
+      <!-- Stacked bar -->
+      <div class="stacked-bar-wrap" role="img" aria-label="Fee category breakdown chart">
+        <div class="stacked-bar" id="stackedBar">
+          <div class="stacked-seg" id="seg-t" style="background:var(--mc-purple)"></div>
+          <div class="stacked-seg" id="seg-c" style="background:var(--mc-blue)"></div>
+          <div class="stacked-seg" id="seg-f" style="background:var(--mc-orange)"></div>
+          <div class="stacked-seg" id="seg-te" style="background:var(--mc-green)"></div>
+          <div class="stacked-seg" id="seg-tr" style="background:var(--mc-mid-gray)"></div>
+        </div>
+      </div>
+
+      <!-- Legend + amounts -->
+      <div class="stacked-legend" id="stackedLegend">
+        <div class="legend-row">
+          <span class="legend-swatch" style="background:var(--mc-purple)"></span>
+          <span class="legend-label">Tuition</span>
+          <span class="legend-pct" id="lpct-t"></span>
+          <span class="legend-amt" id="lamt-t"></span>
+        </div>
+        <div class="legend-row">
+          <span class="legend-swatch" style="background:var(--mc-blue)"></span>
+          <span class="legend-label">Consolidated Fee</span>
+          <span class="legend-pct" id="lpct-c"></span>
+          <span class="legend-amt" id="lamt-c"></span>
+        </div>
+        <div class="legend-row">
+          <span class="legend-swatch" style="background:var(--mc-orange)"></span>
+          <span class="legend-label">Major Facility Fee</span>
+          <span class="legend-pct" id="lpct-f"></span>
+          <span class="legend-amt" id="lamt-f"></span>
+        </div>
+        <div class="legend-row">
+          <span class="legend-swatch" style="background:var(--mc-green)"></span>
+          <span class="legend-label">Technology Fee</span>
+          <span class="legend-pct" id="lpct-te"></span>
+          <span class="legend-amt" id="lamt-te"></span>
+        </div>
+        <div class="legend-row">
+          <span class="legend-swatch" style="background:var(--mc-mid-gray)"></span>
+          <span class="legend-label">Transportation Fee</span>
+          <span class="legend-pct" id="lpct-tr"></span>
+          <span class="legend-amt" id="lamt-tr"></span>
+        </div>
+        <div class="legend-row legend-total">
+          <span class="legend-swatch" style="background:transparent"></span>
+          <span class="legend-label">Total</span>
+          <span class="legend-pct"></span>
+          <span class="legend-amt" id="lamt-tot"></span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+
+    <div class="sidebar-card">
+      <div class="sidebar-card-hdr"><h3>Your Cost Snapshot</h3></div>
+      <div class="sidebar-card-body">
+        <div class="snapshot-grid">
+          <div class="snapshot-item"><div class="snapshot-val" id="snapSem">—</div><div class="snapshot-lbl">Semester</div></div>
+          <div class="snapshot-item"><div class="snapshot-val" id="snapAnn">—</div><div class="snapshot-lbl">Annual Est.</div></div>
+          <div class="snapshot-item"><div class="snapshot-val" id="snapCr">—</div><div class="snapshot-lbl">Avg/Credit</div></div>
+          <div class="snapshot-item"><div class="snapshot-val" id="snapHrs">12</div><div class="snapshot-lbl">Credits</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-card-hdr"><h3>About the Fees</h3></div>
+      <div class="sidebar-card-body">
+        <p><strong>Consolidated Fee:</strong> 20% of tuition (min. $50). Non-refundable after the first week of classes.</p>
+        <p><strong>Major Facility Fee:</strong> Funds capital facilities projects. Non-refundable.</p>
+        <p><strong>Technology Fee:</strong> Offsets instructional technology costs. Non-refundable.</p>
+        <p><strong>Transportation Fee:</strong> Supports transportation operations. Non-refundable.</p>
+      </div>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-card-hdr"><h3>Paying for College</h3></div>
+      <ul class="sidebar-links">
+        <li><a href="https://www.montgomerycollege.edu/paying-for-college/tuition/current-rates.html">Current Tuition Rates</a></li>
+        <li><a href="https://www.montgomerycollege.edu/paying-for-college/financial-aid/index.html">Financial Aid</a></li>
+        <li><a href="https://www.montgomerycollege.edu/paying-for-college/tuition/net-price-calculator.html">Net Price Calculator</a></li>
+        <li><a href="https://www.montgomerycollege.edu/paying-for-college/payments/options.html">Payment Options</a></li>
+        <li><a href="https://www.montgomerycollege.edu/paying-for-college/tuition/residency-policy-and-appeals.html">Residency Policy</a></li>
+        <li><a href="https://www.montgomerycollege.edu/paying-for-college/tuition/special-tuition-waivers.html">Special Tuition Waivers</a></li>
+      </ul>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-card-hdr"><h3>Important Note</h3></div>
+      <div class="sidebar-card-body">
+        <p>This calculator covers <strong>credit courses only</strong>. One course ≈ 3 credit hours. Full-time = 12+ credits.</p>
+        <p>Some courses carry <a href="https://www.montgomerycollege.edu/paying-for-college/tuition/fees.html">additional fees</a>. For noncredit/WDCE courses, call <a href="tel:240-567-5188">240-567-5188</a>.</p>
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">Montgomery College</div>
+    <div class="footer-note">
+      Tuition and fees are approved by the Board of Trustees and are subject to change.
+      This calculator is for planning purposes only. For current rates, visit
+      <a href="https://www.montgomerycollege.edu/paying-for-college/tuition/current-rates.html">montgomerycollege.edu</a>.
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 Montgomery College. All Rights Reserved. · 240-567-5000</div>
+</footer>
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+//  CONFIGURATION — Update this URL to point to wherever MC hosts
+//  the CSV on their website (e.g. a direct link to the file in
+//  the college's document storage or CMS).
+// ══════════════════════════════════════════════════════════════════
+const CSV_URL = '/_documents/paying-for-college/tuition/tuition-rates.csv';
+
+// Fallback inline data used when CSV cannot be fetched
+// (e.g. during local development or if the server is unreachable).
+// Remove or leave this as-is — it mirrors the 2025-2026 published schedule.
+const FALLBACK_CSV = `academic_year,credits,county_tuition,county_cons,state_tuition,state_cons,nonres_tuition,nonres_cons,fac_fee,tech_fee,trans_fee
+2025-2026,1,134,50,273,54.6,380,76,7,5,7
+2025-2026,2,268,53.6,546,109.2,760,152,14,10,14
+2025-2026,3,402,80.4,819,163.8,1140,228,21,15,21
+2025-2026,4,536,107.2,1092,218.4,1520,304,28,20,28
+2025-2026,5,670,134,1365,273,1900,380,35,25,35
+2025-2026,6,804,160.8,1638,327.6,2280,456,42,30,42
+2025-2026,7,938,187.6,1911,382.2,2660,532,49,35,49
+2025-2026,8,1072,214.4,2184,436.8,3040,608,56,40,56
+2025-2026,9,1206,241.2,2457,491.4,3420,684,63,45,63
+2025-2026,10,1340,268,2730,546,3800,760,70,50,70
+2025-2026,11,1474,294.8,3003,600.6,4180,836,77,55,77
+2025-2026,12,1608,321.6,3276,655.2,4560,912,84,60,84
+2025-2026,13,1742,348.4,3549,709.8,4940,988,91,65,91
+2025-2026,14,1876,375.2,3822,764.4,5320,1064,98,70,98
+2025-2026,15,2010,402,4095,819,5700,1140,105,75,105
+2025-2026,16,2144,428.8,4368,873.6,6080,1216,112,80,112
+2025-2026,17,2278,455.6,4641,928.2,6460,1292,119,85,119
+2025-2026,18,2412,482.4,4914,982.8,6840,1368,126,90,126
+2025-2026,19,2546,509.2,5187,1037.4,7220,1444,133,95,133
+2025-2026,20,2680,536,5460,1092,7600,1520,140,100,140`;
+
+// ══════════════════════════════════════════════════════════════════
+//  App State
+// ══════════════════════════════════════════════════════════════════
+let allData   = {};  // { "2025-2026": { 1: {...}, 2: {...}, ... }, ... }
+let years     = [];  // sorted array of academic years
+let currentYear = '';
+let ci        = 0;   // residency code index (0=county, 1=state, 2=nonres)
+let minHrs    = 1;
+let maxHrs    = 20;
+
+const RES_NAMES = ['Montgomery County Resident','Maryland State Resident','Non-Resident'];
+
+// ── CSV Parser ─────────────────────────────────────────────────────
+function parseCSV(text) {
+  const lines = text.trim().split('\n').filter(l => l.trim());
+  if (lines.length < 2) throw new Error('CSV has no data rows');
+  const headers = lines[0].split(',').map(h => h.trim());
+  const parsed  = {};
+
+  for (let i = 1; i < lines.length; i++) {
+    const vals = lines[i].split(',').map(v => v.trim());
+    if (vals.length < headers.length) continue;
+    const row = {};
+    headers.forEach((h, idx) => { row[h] = vals[idx]; });
+
+    const yr  = row['academic_year'];
+    const cr  = parseInt(row['credits']);
+    if (!yr || isNaN(cr)) continue;
+
+    if (!parsed[yr]) parsed[yr] = {};
+    parsed[yr][cr] = {
+      t:     [parseFloat(row['county_tuition']), parseFloat(row['state_tuition']),  parseFloat(row['nonres_tuition'])],
+      c:     [parseFloat(row['county_cons']),    parseFloat(row['state_cons']),     parseFloat(row['nonres_cons'])],
+      fac:   parseFloat(row['fac_fee']),
+      tech:  parseFloat(row['tech_fee']),
+      trans: parseFloat(row['trans_fee']),
+    };
+  }
+  return parsed;
+}
+
+// ── Load CSV ────────────────────────────────────────────────────────
+async function loadData() {
+  let csvText = null;
+  let usedFallback = false;
+
+  try {
+    const res = await fetch(CSV_URL, { cache: 'no-cache' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    csvText = await res.text();
+  } catch (err) {
+    console.warn('CSV fetch failed, using fallback data:', err.message);
+    csvText = FALLBACK_CSV;
+    usedFallback = true;
+  }
+
+  try {
+    allData = parseCSV(csvText);
+  } catch (parseErr) {
+    console.error('CSV parse failed, using fallback data:', parseErr.message);
+    allData = parseCSV(FALLBACK_CSV);
+    usedFallback = true;
+  }
+
+  years = Object.keys(allData).sort();
+  if (years.length === 0) throw new Error('No academic years found in CSV');
+
+  return usedFallback;
+}
+
+// ── Build Year Dropdown ─────────────────────────────────────────────
+function buildYearDropdown() {
+  const sel = document.getElementById('yearSelect');
+  sel.innerHTML = '';
+  years.forEach(yr => {
+    const opt = document.createElement('option');
+    opt.value = yr;
+    opt.textContent = yr + ' Academic Year';
+    sel.appendChild(opt);
+  });
+  // Default to first year (earliest = current)
+  sel.value = years[0];
+  currentYear = years[0];
+}
+
+// ── Build Slider Ticks (pixel-accurate) ────────────────────────────
+/*
+  The browser renders the range thumb such that its CENTER travels from
+  (thumbRadius) px from the left edge to (sliderWidth - thumbRadius) px.
+  We measure the slider's rendered width at runtime, then convert each
+  tick value to a pixel offset using:
+    px = thumbR + (v - min)/(max - min) * (sliderW - 2*thumbR)
+  and express that as a percentage of the tick container width.
+*/
+const THUMB_R = 11; // half of --thumb-size (22px)
+
+function tickPct(v, min, max, sliderW) {
+  const usable = sliderW - 2 * THUMB_R;
+  const px     = THUMB_R + ((v - min) / (max - min)) * usable;
+  return (px / sliderW) * 100;
+}
+
+function buildTicks() {
+  const wrap   = document.getElementById('ticksWrap');
+  const slider = document.getElementById('creditSlider');
+  wrap.innerHTML = '';
+
+  // Wait one frame so the slider has been laid out
+  requestAnimationFrame(() => {
+    const sliderW = slider.offsetWidth;
+    if (!sliderW) return;
+
+    const allVals = [3, 6, 9, 12, 15, 18]
+      .filter(v => v >= minHrs && v <= maxHrs);
+    const ticks = [...new Set(allVals)].sort((a, b) => a - b);
+
+    ticks.forEach(v => {
+      const pct = tickPct(v, minHrs, maxHrs, sliderW);
+      const el  = document.createElement('div');
+      el.className  = 'tick-mark';
+      el.style.left = pct + '%';
+      el.innerHTML  = `<div class="tick-line"></div><div class="tick-label">${v}</div>`;
+      wrap.appendChild(el);
+    });
+  });
+}
+
+// ── Build Presets ───────────────────────────────────────────────────
+function buildPresets() {
+  const row = document.getElementById('presetRow');
+  const lbl = row.querySelector('.preset-lbl');
+  row.innerHTML = '';
+  row.appendChild(lbl);
+
+  const presets = [
+    { hr: 3,  label: '3 cr' },
+    { hr: 6,  label: '6 cr' },
+    { hr: 12, label: '12 cr' },
+    { hr: 15, label: '15 cr' },
+    { hr: 18, label: '18 cr' },
+  ].filter(p => p.hr >= minHrs && p.hr <= maxHrs);
+
+  presets.forEach(p => {
+    const btn = document.createElement('button');
+    btn.className  = 'preset-btn';
+    btn.dataset.hr = p.hr;
+    btn.textContent = p.label;
+    btn.onclick = () => setCredits(p.hr);
+    row.appendChild(btn);
+  });
+}
+
+// ── Update per-credit rates in residency tabs ──────────────────────
+function updateResidencyTabs() {
+  const d = allData[currentYear];
+  if (!d) return;
+  const r1 = d[1];
+  if (r1) {
+    document.getElementById('rateCounty').textContent = `Code 1 · $${r1.t[0]}/credit`;
+    document.getElementById('rateState').textContent  = `Code 2 · $${r1.t[1]}/credit`;
+    document.getElementById('rateNonres').textContent = `Code 3 · $${r1.t[2]}/credit`;
+  }
+}
+
+// ── Get data row ───────────────────────────────────────────────────
+function getRow(hrs, codeIdx) {
+  const d = allData[currentYear];
+  if (!d || !d[hrs]) return null;
+  const r = d[hrs];
+  const t   = r.t[codeIdx];
+  const c   = r.c[codeIdx];
+  const fac = r.fac, tech = r.tech, trans = r.trans;
+  return { t, c, fac, tech, trans, tot: t + c + fac + tech + trans };
+}
+
+// ── Formatters ─────────────────────────────────────────────────────
+const fmt  = n => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmtS = n => '$' + Math.round(n).toLocaleString('en-US');
+const p    = (a, b) => (a / b * 100).toFixed(1) + '%';
+const pw   = (a, b) => (a / b * 100) + '%';
+
+// ── Main update ────────────────────────────────────────────────────
+function update() {
+  const hrs = parseInt(document.getElementById('creditSlider').value);
+  const ann = document.getElementById('annualToggle').checked;
+  const m   = ann ? 2 : 1;
+  const row = getRow(hrs, ci);
+  if (!row) return;
+  const total = row.tot * m;
+
+  // Credit display
+  document.getElementById('creditDisplay').innerHTML =
+    hrs + ' <span class="unit">' + (hrs === 1 ? 'credit' : 'credits') + '</span>';
+
+  // Total box
+  document.getElementById('totalPeriod').textContent =
+    ann ? 'Annual Estimate (2 Semesters)' : 'Semester Total';
+  document.getElementById('totalAmount').textContent = fmt(total);
+  document.getElementById('perCredit').textContent   = fmt(row.tot / hrs);
+  document.getElementById('residencyLabel').textContent = RES_NAMES[ci];
+
+  // Stacked bar segments (100% width, each segment = % of total)
+  const fees = [
+    { seg: 'seg-t',  val: row.t },
+    { seg: 'seg-c',  val: row.c },
+    { seg: 'seg-f',  val: row.fac },
+    { seg: 'seg-te', val: row.tech },
+    { seg: 'seg-tr', val: row.trans },
+  ];
+  fees.forEach(f => {
+    document.getElementById(f.seg).style.width = pw(f.val, row.tot);
+  });
+
+  // Legend amounts and percentages
+  const pairs = [
+    ['t',  row.t],
+    ['c',  row.c],
+    ['f',  row.fac],
+    ['te', row.tech],
+    ['tr', row.trans],
+  ];
+  pairs.forEach(([key, val]) => {
+    document.getElementById('lpct-' + key).textContent = p(val, row.tot);
+    document.getElementById('lamt-' + key).textContent = fmt(val * m);
+  });
+  document.getElementById('lamt-tot').textContent = fmt(total);
+
+  // Custom track fill — use same pixel math as tick positions
+  const slider  = document.getElementById('creditSlider');
+  const sliderW = slider.offsetWidth;
+  const fillPct = sliderW > 0
+    ? tickPct(hrs, minHrs, maxHrs, sliderW)
+    : ((hrs - minHrs) / (maxHrs - minHrs) * 100);
+  document.getElementById('trackFill').style.width = fillPct + '%';
+
+  // Sidebar snapshot
+  document.getElementById('snapSem').textContent = fmtS(row.tot);
+  document.getElementById('snapAnn').textContent = fmtS(row.tot * 2);
+  document.getElementById('snapCr').textContent  = fmtS(row.tot / hrs);
+  document.getElementById('snapHrs').textContent = hrs;
+
+  // Preset highlight
+  document.querySelectorAll('.preset-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.hr) === hrs);
+  });
+}
+
+function setResidency(c) { ci = c; update(); }
+
+function setCredits(n) {
+  document.getElementById('creditSlider').value = n;
+  update();
+}
+
+function onYearChange() {
+  currentYear = document.getElementById('yearSelect').value;
+  const d = allData[currentYear];
+  const hrs = Object.keys(d).map(Number);
+  minHrs = Math.min(...hrs);
+  maxHrs = Math.min(18, Math.max(...hrs)); // cap at 18 — realistic semester max
+  const slider = document.getElementById('creditSlider');
+  slider.min = minHrs;
+  slider.max = maxHrs;
+  // Keep current value within new range
+  const curHrs = parseInt(slider.value);
+  if (curHrs < minHrs) slider.value = minHrs;
+  if (curHrs > maxHrs) slider.value = maxHrs;
+
+  buildTicks();
+  buildPresets();
+  updateResidencyTabs();
+  update();
+}
+
+// ── Reveal UI sections ─────────────────────────────────────────────
+function showUI() {
+  ['controlsRow', 'residencySection', 'sliderSection',
+   'totalBox', 'breakdownSection'].forEach(id => {
+    document.getElementById(id).style.display = '';
+  });
+}
+
+// ── Init ───────────────────────────────────────────────────────────
+(async function init() {
+  const statusEl  = document.getElementById('dataStatus');
+  const statusMsg = document.getElementById('dataStatusMsg');
+
+  try {
+    const usedFallback = await loadData();
+
+    if (usedFallback) {
+      statusEl.className = 'data-status error';
+      statusMsg.textContent =
+        'Could not load live data from the server. Showing built-in 2025–2026 rates. ' +
+        'Once the CSV is published at ' + CSV_URL + ', this page will load live.';
+    } else {
+      statusEl.style.display = 'none';
+    }
+
+    buildYearDropdown();
+    onYearChange(); // sets minHrs/maxHrs, builds ticks/presets, calls update()
+    showUI();
+
+    // Rebuild ticks if window resizes (slider width changes)
+    window.addEventListener('resize', () => buildTicks());
+
+  } catch (err) {
+    statusEl.className = 'data-status error';
+    statusMsg.textContent = 'Error loading fee data: ' + err.message;
+    console.error(err);
+  }
+})();
+</script>
+</body>
+</html>
